@@ -4,15 +4,17 @@ Version: 0.0.0.9000
 Authors@R: person("Clayton", "Yochum", email = "claytonjy@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
+URL: https://github.com/ClaytonJY/tidyquandl
+BugReports: https://github.com/ClaytonJY/tidyquandl/issues
+Imports: 
+    checkmate,
+    purrr,
+    Quandl,
+    tibble
 Suggests: 
     testthat
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
-Imports: 
-    Quandl,
-    checkmate,
-    tibble,
-    purrr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
