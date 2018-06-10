@@ -1,0 +1,45 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+# tidyquandl
+
+The goal of tidyquandl is to be an easier-to-use and tidy interfact to the [Quandl](https://www.quandl.com/) API for financial data.
+
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("ClaytonJY/tidyquandl")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(tidyquandl)
+
+Quandl::Quandl.api_key(Sys.getenv("QUANDL_API_KEY"))
+
+quandl_datatable("ZACKS/MT", ticker = "AAPL")
+```
+
+
+## Contributing
+
+Please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.

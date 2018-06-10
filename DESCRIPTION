@@ -1,0 +1,18 @@
+Package: tidyquandl
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: person("Clayton", "Yochum", email = "claytonjy@gmail.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Suggests: 
+    testthat
+ByteCompile: true
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    Quandl,
+    checkmate,
+    tibble,
+    purrr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.0.1
