@@ -8,6 +8,14 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ClaytonJY/tidyquandl}
+  \item Report bugs at \url{https://github.com/ClaytonJY/tidyquandl/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Clayton Yochum \email{claytonjy@gmail.com}
 
