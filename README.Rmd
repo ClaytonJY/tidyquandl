@@ -33,9 +33,9 @@ This is a basic example which shows you how to solve a common problem:
 ```{r example}
 library(tidyquandl)
 
-Quandl::Quandl.api_key(Sys.getenv("QUANDL_API_KEY"))
+quandl_api_key(Sys.getenv("QUANDL_API_KEY"))
 
-quandl_datatable("ZACKS/MT", ticker = "AAPL")
+quandl_datatable("WIKI/PRICES", ticker = "AAPL", date.gte = "2018-01-01")
 ```
 
 

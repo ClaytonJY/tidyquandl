@@ -4,7 +4,7 @@
 \alias{quandl_datatable}
 \title{Retrieve data from a Quandl Tables API Endpoint}
 \usage{
-quandl_datatable(code, ..., max_attempts = 2L, delay = 1L,
+quandl_datatable(code, ..., max_attempts = 2L, delay = 0.5,
   batch_size = 100L)
 }
 \arguments{
@@ -39,11 +39,24 @@ tickers and 1000 dates.
 }
 
 \examples{
-Quandl::Quandl.api_key(Sys.getenv("QUANDL_API_KEY"))
+quandl_api_key(Sys.getenv("QUANDL_API_KEY"))
 
-# get metadata on Apple from Zack's Master Table
-quandl_datatable("ZACKS/MT", ticker = "AAPL")
+# get one day of prices on Apple from Wiki Prices
+quandl_datatable("WIKI/PRICES", ticker = "AAPL", date = "2018-01-02")
 
-# get stock splits from Apple
-quandl_datatable("ZACKS/HDM", m_ticker = "AAPL", action_type = 6)
+# get one month of prices from two tickers
+quandl_datatable(
+  "WIKI/PRICES",
+  ticker = c("AAPL", "MSFT"),
+  date.gte = "2018-01-01",
+  date.lt = "2018-02-01"
+)
+
+# only return some columns
+quandl_datatable(
+  "WIKI/PRICES",
+  ticker = "AAPL",
+  date = "2018-01-02",
+  qopts.columns = c("date", "ticker", "close")
+)
 }

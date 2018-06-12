@@ -25,18 +25,31 @@
 #' @export
 #'
 #' @examples
-#' Quandl::Quandl.api_key(Sys.getenv("QUANDL_API_KEY"))
+#' quandl_api_key(Sys.getenv("QUANDL_API_KEY"))
 #'
-#' # get metadata on Apple from Zack's Master Table
-#' quandl_datatable("ZACKS/MT", ticker = "AAPL")
+#' # get one day of prices on Apple from Wiki Prices
+#' quandl_datatable("WIKI/PRICES", ticker = "AAPL", date = "2018-01-02")
 #'
-#' # get stock splits from Apple
-#' quandl_datatable("ZACKS/HDM", m_ticker = "AAPL", action_type = 6)
-quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 1L, batch_size = 100L) {
+#' # get one month of prices from two tickers
+#' quandl_datatable(
+#'   "WIKI/PRICES",
+#'   ticker = c("AAPL", "MSFT"),
+#'   date.gte = "2018-01-01",
+#'   date.lt = "2018-02-01"
+#' )
+#'
+#' # only return some columns
+#' quandl_datatable(
+#'   "WIKI/PRICES",
+#'   ticker = "AAPL",
+#'   date = "2018-01-02",
+#'   qopts.columns = c("date", "ticker", "close")
+#' )
+quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 0.5, batch_size = 100L) {
 
   checkmate::assert_string(code)
   checkmate::assert_count(max_attempts, positive = TRUE)
-  checkmate::assert_count(delay,        positive = TRUE)
+  checkmate::assert_number(delay, lower = 0)
   checkmate::assert_count(batch_size,   positive = TRUE, null.ok = TRUE)
 
   # API key is NULL if unset
