@@ -53,3 +53,14 @@ test_that("quandl_datatable allows for control over retry loop", {
   expect_true(time["elapsed"] > 3)
 
 })
+
+
+test_that("quandl_datatable batching doesn't affect output", {
+
+  tickers <- c("AA", "AAPL", "ABBV", "ABC", "AGN")
+
+  expect_identical(
+    quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02"),
+    quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02", batch_size = 2L)
+  )
+})

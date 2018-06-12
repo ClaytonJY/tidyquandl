@@ -7,9 +7,10 @@ License: MIT + file LICENSE
 URL: https://github.com/ClaytonJY/tidyquandl
 BugReports: https://github.com/ClaytonJY/tidyquandl/issues
 Imports: 
-    checkmate,
-    purrr,
     Quandl,
+    checkmate,
+    rlang,
+    purrr,
     tibble
 Suggests: 
     testthat

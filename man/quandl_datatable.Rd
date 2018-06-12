@@ -4,7 +4,8 @@
 \alias{quandl_datatable}
 \title{Retrieve data from a Quandl Tables API Endpoint}
 \usage{
-quandl_datatable(code, ..., max_attempts = 3L, delay = 1L)
+quandl_datatable(code, ..., max_attempts = 2L, delay = 1L,
+  batch_size = 100L)
 }
 \arguments{
 \item{code}{<\code{character(1)}> Datatable code on Quandl, specified as a string;
@@ -15,18 +16,28 @@ see \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable}}
 \item{max_attempts}{<\code{integer(1)}> Maximum number of times to attempt query.}
 
 \item{delay}{<\code{integer(1)}> Number of seconds to wait between retries.}
+
+\item{batch_size}{<\code{integer(1)}> maximum length of any parameter in a single
+request; see Batching below}
 }
 \value{
 <\code{tbl_df}> Results from Quandl in tibble form.
 }
 \description{
 This is a wrapper around \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable} which allows for multiple
-attempts, always fetches all results (\code{paginate = TRUE}), and converts the
-result to a tibble.
+attempts, batches long parameters into multiple requests, always fetches all
+results (\code{paginate = TRUE}), and converts the result to a tibble.
 }
-\details{
-Will throw error if empty table returned.
+\section{Batching}{
+
+The Quandl API can only support a limited number of parameters in one call.
+If we want to filter on e.g. 1,000 tickers, that requires multiple requests
+to complete. This wrapper will handle this for you, automatically making
+multiple requests to fetch the desired output. Currently, only one \code{...}
+input can be longer than \code{batch_size}, so you can't filter on e.g. both 1000
+tickers and 1000 dates.
 }
+
 \examples{
 Quandl::Quandl.api_key(Sys.getenv("QUANDL_API_KEY"))
 

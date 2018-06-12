@@ -1,18 +1,27 @@
 #' Retrieve data from a Quandl Tables API Endpoint
 #'
 #' This is a wrapper around [Quandl::Quandl.datatable] which allows for multiple
-#' attempts, always fetches all results (`paginate = TRUE`), and converts the
-#' result to a tibble.
-#'
-#' Will throw error if empty table returned.
+#' attempts, batches long parameters into multiple requests, always fetches all
+#' results (`paginate = TRUE`), and converts the result to a tibble.
 #'
 #' @param code <`character(1)`> Datatable code on Quandl, specified as a string;
 #'   see [Quandl::Quandl.datatable]
 #' @param ... Additional arguments passed to [Quandl::Quandl.datatable]
 #' @param max_attempts <`integer(1)`> Maximum number of times to attempt query.
 #' @param delay <`integer(1)`> Number of seconds to wait between retries.
+#' @param batch_size <`integer(1)`> maximum length of any parameter in a single
+#'   request; see Batching below
 #'
 #' @return <`tbl_df`> Results from Quandl in tibble form.
+#'
+#' @section Batching:
+#' The Quandl API can only support a limited number of parameters in one call.
+#' If we want to filter on e.g. 1,000 tickers, that requires multiple requests
+#' to complete. This wrapper will handle this for you, automatically making
+#' multiple requests to fetch the desired output. Currently, only one `...`
+#' input can be longer than `batch_size`, so you can't filter on e.g. both 1000
+#' tickers and 1000 dates.
+#'
 #' @export
 #'
 #' @examples
@@ -23,32 +32,41 @@
 #'
 #' # get stock splits from Apple
 #' quandl_datatable("ZACKS/HDM", m_ticker = "AAPL", action_type = 6)
-quandl_datatable <- function(code, ..., max_attempts = 3L, delay = 1L) {
+quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 1L, batch_size = 100L) {
 
   checkmate::assert_string(code)
   checkmate::assert_count(max_attempts, positive = TRUE)
-  checkmate::assert_count(delay,   positive = TRUE)
+  checkmate::assert_count(delay,        positive = TRUE)
+  checkmate::assert_count(batch_size,   positive = TRUE, null.ok = TRUE)
 
   # API key is NULL if unset
   checkmate::assert_string(Quandl::Quandl.api_key())
 
-  func <- purrr::safely(Quandl::Quandl.datatable)
+  param_batches <- batch_parameters(list(...), batch_size)
 
-  response <- list(result = NULL)
-  attempts <- 0L
+  quandl_func <- purrr::safely(purrr::lift_dl(purrr::partial(Quandl::Quandl.datatable, code = code, paginate = TRUE)))
 
-  while (is.null(response$result) && (attempts < max_attempts)) {
+  df <- purrr::map_df(param_batches, function(params) {
 
-    if (attempts > 0L) Sys.sleep(delay)
+    response <- list(result = NULL)
+    attempts <- 0L
 
-    response <- func(code, paginate = TRUE, ...)
+    while (is.null(response$result) && (attempts < max_attempts)) {
 
-    attempts <- attempts + 1L
-  }
+      if (attempts > 0L) Sys.sleep(delay)
 
-  # error if no results
-  if (is.null(response$result))   stop("No result from Quandl after ", attempts, " attempts. Last error:\n\t\t\t\t", response$error)
-  if (nrow(response$result) == 0) stop("Quandl returned empty table.")
+      response <- quandl_func(params)
 
-  tibble::as_tibble(response$result)
+      attempts <- attempts + 1L
+    }
+
+    # error if no results
+    if (is.null(response$result)) {
+      stop("No result from Quandl after ", attempts, " attempts. Last error:\n\t\t\t\t", response$error)
+    }
+
+    response$result
+  })
+
+  tibble::as_tibble(df)
 }
