@@ -4,9 +4,9 @@
 \name{tidyquandl-package}
 \alias{tidyquandl}
 \alias{tidyquandl-package}
-\title{tidyquandl: What the Package Does (One Line, Title Case)}
+\title{tidyquandl: A tidy interface to financial data via Quandl.com}
 \description{
-What the package does (one paragraph).
+A tidy alternative to the `Quandl` package. Automatically batches and retries requests and ensures tibble outputs.
 }
 \seealso{
 Useful links:
