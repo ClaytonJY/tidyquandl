@@ -1,21 +1,21 @@
 Package: tidyquandl
 Title: A tidy interface to financial data via Quandl.com
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: person("Clayton", "Yochum", email = "claytonjy@gmail.com", role = c("aut", "cre"))
 Description: A tidy alternative to the `Quandl` package. Automatically batches and retries requests and ensures tibble outputs.
 License: MIT + file LICENSE
 URL: https://github.com/ClaytonJY/tidyquandl
 BugReports: https://github.com/ClaytonJY/tidyquandl/issues
 Imports: 
-    Quandl,
     checkmate,
-    rlang,
-    tibble,
     dplyr,
-    purrr
+    purrr,
+    Quandl,
+    rlang,
+    tibble
 Suggests: 
-    testthat,
-    covr
+    covr,
+    testthat
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

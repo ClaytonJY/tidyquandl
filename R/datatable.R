@@ -46,11 +46,10 @@
 #'   qopts.columns = c("date", "ticker", "close")
 #' )
 quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 0.5, batch_size = 100L) {
-
   checkmate::assert_string(code)
   checkmate::assert_count(max_attempts, positive = TRUE)
   checkmate::assert_number(delay, lower = 0)
-  checkmate::assert_count(batch_size,   positive = TRUE, null.ok = TRUE)
+  checkmate::assert_count(batch_size, positive = TRUE, null.ok = TRUE)
 
   # API key is NULL if unset
   checkmate::assert_string(Quandl::Quandl.api_key())
@@ -60,12 +59,10 @@ quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 0.5, batch_si
   quandl_func <- purrr::safely(purrr::lift_dl(purrr::partial(Quandl::Quandl.datatable, code = code, paginate = TRUE)))
 
   df <- purrr::map_df(param_batches, function(params) {
-
     response <- list(result = NULL)
     attempts <- 0L
 
     while (is.null(response$result) && (attempts < max_attempts)) {
-
       if (attempts > 0L) Sys.sleep(delay)
 
       response <- quandl_func(params)

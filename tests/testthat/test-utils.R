@@ -1,7 +1,6 @@
 context("Test utility functions")
 
 describe("batch_params", {
-
   params <- list(
     a = 1,
     b = 3:4,
@@ -10,9 +9,8 @@ describe("batch_params", {
   )
 
   it("splits up parameters appropriately", {
-
     batch_size <- 20L
-    n_batches  <- ceiling(max(lengths(params)) / batch_size)
+    n_batches <- ceiling(max(lengths(params)) / batch_size)
 
     batches <- tidyquandl:::batch_parameters(params, batch_size)
 
