@@ -45,7 +45,7 @@
 #'   date = "2018-01-02",
 #'   qopts.columns = c("date", "ticker", "close")
 #' )
-quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 0.5, batch_size = 100L) {
+quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 0.5, batch_size = 50L) {
   checkmate::assert_string(code)
   checkmate::assert_count(max_attempts, positive = TRUE)
   checkmate::assert_number(delay, lower = 0)
