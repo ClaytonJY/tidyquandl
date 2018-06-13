@@ -22,6 +22,11 @@ describe("batch_params", {
     expect_equal(length(batches), 1L)
     expect_identical(batches, list(params))
     expect_identical(batches, tidyquandl:::batch_parameters(params, NULL))
+
+    batches <- tidyquandl:::batch_parameters(params, max(lengths(params)))
+
+    expect_equal(length(batches), 1L)
+    expect_identical(batches, tidyquandl:::batch_parameters(params, NULL))
   })
 
   it("errors instead of batching over multiple inputs", {

@@ -5,7 +5,7 @@
 batch_parameters <- function(params, batch_size) {
 
   # if not batching, wrap in list
-  if (is.null(batch_size) || all(lengths(params) < batch_size)) {
+  if (is.null(batch_size) || all(lengths(params) <= batch_size)) {
     return(list(params))
   }
 
