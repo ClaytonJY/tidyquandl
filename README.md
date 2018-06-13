@@ -3,11 +3,16 @@
 `tidyquandl`
 ============
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/ClaytonJY/tidyquandl.svg?branch=master)](https://travis-ci.org/ClaytonJY/tidyquandl)
 
 The goal of `tidyquandl` is to be an easy-to-use and tidy interface to the [Quandl](https://www.quandl.com/) API for financial data.
 
-Unlike the `Quandl` package provided by the Quandl team, `tidyquandl` - always returns tibbles - always fetched all results (`paginate = TRUE`) - automatically retries failed queries - automatically splits large queries into manageable ones (batching)
+Unlike the `Quandl` package provided by the Quandl team, `tidyquandl`
+
+-   always returns tibbles
+-   always fetched all results (`paginate = TRUE`)
+-   automatically retries failed queries
+-   automatically splits large queries into manageable ones (batching)
 
 Currently, it has just two user-facing functions: `quandl_api_key` and `quandl_datatable`. More will be added in the future, but the focus will remain on the Tables API rather than the Timeseries API
 

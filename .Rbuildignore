@@ -2,4 +2,5 @@
 ^\.Rproj\.user$
 ^\.github$
 ^README\.Rmd$
-quandl-api-key.txt
+^quandl-api-key\.txt$
+^\.travis\.yml$
