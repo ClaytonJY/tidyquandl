@@ -4,3 +4,4 @@
 ^README\.Rmd$
 ^quandl-api-key\.txt$
 ^\.travis\.yml$
+^codecov\.yml$
