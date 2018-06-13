@@ -3,14 +3,14 @@
 `tidyquandl`
 ============
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/ClaytonJY/tidyquandl.svg?branch=master)](https://travis-ci.org/ClaytonJY/tidyquandl)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/ClaytonJY/tidyquandl.svg?branch=master)](https://travis-ci.org/ClaytonJY/tidyquandl) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ClaytonJY/tidyquandl?branch=master&svg=true)](https://ci.appveyor.com/project/ClaytonJY/tidyquandl) [![Coverage status](https://codecov.io/gh/ClaytonJY/tidyquandl/branch/master/graph/badge.svg)](https://codecov.io/github/ClaytonJY/tidyquandl?branch=master)
 
 The goal of `tidyquandl` is to be an easy-to-use and tidy interface to the [Quandl](https://www.quandl.com/) API for financial data.
 
 Unlike the `Quandl` package provided by the Quandl team, `tidyquandl`
 
 -   always returns tibbles
--   always fetched all results (`paginate = TRUE`)
+-   always fetches all results (`paginate = TRUE`)
 -   automatically retries failed queries
 -   automatically splits large queries into manageable ones (batching)
 
