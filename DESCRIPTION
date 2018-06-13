@@ -10,8 +10,9 @@ Imports:
     Quandl,
     checkmate,
     rlang,
-    purrr,
-    tibble
+    tibble,
+    dplyr,
+    purrr
 Suggests: 
     testthat,
     covr
