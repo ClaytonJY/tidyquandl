@@ -10,10 +10,12 @@ Imports:
     Quandl,
     checkmate,
     rlang,
-    purrr,
-    tibble
+    tibble,
+    dplyr,
+    purrr
 Suggests: 
-    testthat
+    testthat,
+    covr
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

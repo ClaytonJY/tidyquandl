@@ -3,11 +3,16 @@
 `tidyquandl`
 ============
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental)
+[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://tidyverse.org/lifecycle/#experimental) [![Travis build status](https://travis-ci.org/ClaytonJY/tidyquandl.svg?branch=master)](https://travis-ci.org/ClaytonJY/tidyquandl) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ClaytonJY/tidyquandl?branch=master&svg=true)](https://ci.appveyor.com/project/ClaytonJY/tidyquandl) [![Coverage status](https://codecov.io/gh/ClaytonJY/tidyquandl/branch/master/graph/badge.svg)](https://codecov.io/github/ClaytonJY/tidyquandl?branch=master)
 
 The goal of `tidyquandl` is to be an easy-to-use and tidy interface to the [Quandl](https://www.quandl.com/) API for financial data.
 
-Unlike the `Quandl` package provided by the Quandl team, `tidyquandl` - always returns tibbles - always fetched all results (`paginate = TRUE`) - automatically retries failed queries - automatically splits large queries into manageable ones (batching)
+Unlike the `Quandl` package provided by the Quandl team, `tidyquandl`
+
+-   always returns tibbles
+-   always fetches all results (`paginate = TRUE`)
+-   automatically retries failed queries
+-   automatically splits large queries into manageable ones (batching)
 
 Currently, it has just two user-facing functions: `quandl_api_key` and `quandl_datatable`. More will be added in the future, but the focus will remain on the Tables API rather than the Timeseries API
 
@@ -77,6 +82,12 @@ quandl_datatable(
 Contributing
 ------------
 
-Your contributions are welcome! Issues, typo fixes, new functions; I'm up for anything. There is a boilerplate `CONTRIBUTING.md` worth reading, though it will be eventually updated to be more specific to this package and my workflow.
+Your contributions are welcome! Issues, typo fixes, new functions; I'm up for anything. There is a boilerplate `CONTRIBUTING.md` inside `.github/` which will be eventually updated to be more specific to this package and my workflow.
+
+To test & check you'll need to set an environment variable `QUANDL_API_KEY`. I recommend creating an `.Renviron` file in this directory with a single line like
+
+    QUANDL_API_KEY=what3v3ry0urk3y1s
+
+Then tests and examples can read from that via `Sys.getenv("QUANDL_API_KEY")`.
 
 Please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
