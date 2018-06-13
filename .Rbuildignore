@@ -5,3 +5,4 @@
 ^quandl-api-key\.txt$
 ^\.travis\.yml$
 ^codecov\.yml$
+^appveyor\.yml$
