@@ -82,6 +82,12 @@ quandl_datatable(
 Contributing
 ------------
 
-Your contributions are welcome! Issues, typo fixes, new functions; I'm up for anything. There is a boilerplate `CONTRIBUTING.md` worth reading, though it will be eventually updated to be more specific to this package and my workflow.
+Your contributions are welcome! Issues, typo fixes, new functions; I'm up for anything. There is a boilerplate `CONTRIBUTING.md` inside `.github/` which will be eventually updated to be more specific to this package and my workflow.
+
+To test & check you'll need to set an environment variable `QUANDL_API_KEY`. I recommend creating an `.Renviron` file in this directory with a single line like
+
+    QUANDL_API_KEY=what3v3ry0urk3y1s
+
+Then tests and examples can read from that via `Sys.getenv("QUANDL_API_KEY")`.
 
 Please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
