@@ -5,7 +5,7 @@
 \title{Retrieve data from a Quandl Tables API Endpoint}
 \usage{
 quandl_datatable(code, ..., max_attempts = 2L, delay = 0.5,
-  batch_size = 100L)
+  batch_size = 50L)
 }
 \arguments{
 \item{code}{<\code{character(1)}> Datatable code on Quandl, specified as a string;
