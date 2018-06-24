@@ -84,7 +84,7 @@ quandl_datatable(
 
 ## Contributing
 
-Your contributions are welcome! Issues, typo fixes, new functions; I'm up for anything. There is a boilerplate `CONTRIBUTING.md` inside `.github/` which will be eventually updated to be more specific to this package and my workflow.
+Your contributions are welcome! Issues, typo fixes, new functions; I'm up for anything. See `.github/CONTRIBUTING.md` for more information.
 
 To test & check you'll need to set an environment variable `QUANDL_API_KEY`. I recommend creating an `.Renviron` file in this directory with a single line like
 ```
