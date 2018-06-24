@@ -21,12 +21,19 @@ The main function, `quandl_datatable`, currently wraps `Quandl::Quandl.datatable
 Installation
 ------------
 
-You can install the development version from [GitHub](https://github.com/) with:
+You can install the releases and development versions from [GitHub](https://github.com/) wih the `devtools` package:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("ClaytonJY/tidyquandl")
+
+# latest release
+devtools::install_github("claytonjy/tidyquandl@*release")
+
+# latest development version
+devtools::install_github("claytonjy/tidyquandl")
 ```
+
+I recommend using the release version in general, but be sure to install the development version when filing bugs and pull requests.
 
 Usage
 -----
