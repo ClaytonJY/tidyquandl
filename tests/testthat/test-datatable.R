@@ -16,6 +16,24 @@ describe("quandl_datatable", {
     )
   })
 
+  it("automatically fetches all results", {
+
+    # function template
+    f <- purrr::partial(
+      quandl_datatable,
+      "WIKI/PRICES",
+      ticker = "AAPL",
+      date.gte = "2018-01-01",
+      date.lte = "2018-03-01"
+    )
+
+    normal <- f()
+    paged  <- f(qopts.per_page = 20)  # 3 pages
+
+    expect_tibble(paged)
+    expect_identical(normal, paged)
+  })
+
   it("shows error from Quandl", {
 
     # bad code
