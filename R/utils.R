@@ -1,3 +1,85 @@
+#' Make a request to Quandl
+#'
+#' Responses returned as text to be parsed further.
+#' Automatically retries up to 3 times.
+#' Errors are parsed and returned nicely.
+#'
+#' @noRd
+#' @keywords internal
+quandl_api <- function(
+  path,
+  type    = c("csv", "json", "xml"),
+  query   = NULL,
+  api_key = quandl_api_key(),
+  ...
+) {
+
+  type   <- rlang::arg_match(type)
+  if (type == "xml") stop("Type `xml` currently unsupported.")
+
+  # set API and client info as headers
+  headers <- c(
+    `Request-Source`         = 'R',
+    `Request-Source-Version` = paste0("tidyquandl_", utils::packageVersion("tidyquandl")),
+    `X-Api-Token`            = api_key
+  )
+
+  # collapse multi-value paramters
+  if (!is.null(query)) query <- lapply(query, paste, collapse = ",")
+
+  # fetch result from Quandl
+  # will retry for HTTP errors (400+)
+  response <- httr::RETRY(
+    "GET",
+    url   = glue::glue("https://www.quandl.com/api/v3/{path}.{type}"),
+    query = query,
+    httr::add_headers(.headers = headers),
+    ...
+  )
+
+  # extract content as text
+  content <- httr::content(
+    response,
+    as = "text",
+    encoding = "UTF-8"
+  )
+
+  # error on http codes 400+
+  if (httr::http_error(response)) {
+    stop(build_error_message(
+      content, httr::http_type(response), httr::status_code(response)
+    ))
+  }
+
+  content
+}
+
+
+#' Build error message by parsing content
+#'
+#' @noRd
+#' @keywords internal
+build_error_message <- function(content, type = c("text/csv", "application/json"), status_code) {
+
+  type <- rlang::arg_match(type)
+
+  # parse error into list/tibble with names "code", "message"
+  quandl <- switch(
+    type,
+    "text/csv"         = readr::read_csv(content, col_types = "cc"),
+    "application/json" = jsonlite::fromJSON(content)[[1]]
+  )
+
+  msg <- glue::glue(
+    "{quandl$message}",
+    "Quandl Error Code: {quandl$code}",
+    "HTTP Status Code: {status_code}",
+    .sep = "\n"
+  )
+
+  msg
+}
+
 #' Split a set of parameters into batches
 #'
 #' @noRd

@@ -9,9 +9,13 @@ BugReports: https://github.com/ClaytonJY/tidyquandl/issues
 Imports: 
     checkmate,
     dplyr,
+    glue,
+    httr,
+    jsonlite,
     purrr,
     Quandl,
     rlang,
+    readr,
     tibble
 Suggests: 
     covr,
