@@ -2,7 +2,7 @@ context("Test utility functions")
 
 describe("quandl_api()", {
 
-  path   <- "datatables/WIKI/PRICES"
+  path <- "datatables/WIKI/PRICES"
 
   it("returns expected text for simple queries", {
 
@@ -13,13 +13,20 @@ describe("quandl_api()", {
     )
 
     # CSV
+    response <- tidyquandl:::quandl_api(path, "csv", params)
+    expect_class(response, "response")
+    expect_identical(httr::http_type(response), "text/csv")
     expect_string(
-      tidyquandl:::quandl_api(path, "csv", params),
-      pattern = "^ticker,date,close\nAAPL,2018-01-02,[0-9]+\\.[0-9]{2}\n$")
+      httr::content(response, as = "text"),
+      pattern = "^ticker,date,close\nAAPL,2018-01-02,[0-9]+\\.[0-9]{2}\n$"
+    )
 
     # JSON
+    response <- tidyquandl:::quandl_api(path, "json", params)
+    expect_class(response, "response")
+    expect_identical(httr::http_type(response), "application/json")
     expect_string(
-      tidyquandl:::quandl_api(path, "json", params),
+      httr::content(response, as = "text"),
       pattern = '"data":.+"AAPL","2018-01-02",[0-9]+\\.[0-9]{2}.+"columns":.+"ticker".+"date".+"close"'
     )
   })
@@ -34,15 +41,15 @@ describe("quandl_api()", {
 
     # 3 lines: 1 header, 2 results
     expect_string(
-      tidyquandl:::quandl_api(path, "csv", params),
+      httr::content(tidyquandl:::quandl_api(path, "csv", params), as = "text"),
       pattern = "^(.+\n){3}$"
     )
   })
 
   it("handles Date inputs", {
     expect_identical(
-      tidyquandl:::quandl_api(path, "csv", list(ticker = "AAPL", date = "2018-01-02")),
-      tidyquandl:::quandl_api(path, "csv", list(ticker = "AAPL", date = as.Date("2018-01-02")))
+      httr::content(tidyquandl:::quandl_api(path, "csv", list(ticker = "AAPL", date = "2018-01-02")),          as = "text"),
+      httr::content(tidyquandl:::quandl_api(path, "csv", list(ticker = "AAPL", date = as.Date("2018-01-02"))), as = "text")
     )
   })
 

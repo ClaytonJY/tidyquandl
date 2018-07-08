@@ -4,6 +4,8 @@
 #' Automatically retries up to 3 times.
 #' Errors are parsed and returned nicely.
 #'
+#' @return <`response`>
+#'
 #' @noRd
 #' @keywords internal
 quandl_api <- function(
@@ -37,21 +39,16 @@ quandl_api <- function(
     ...
   )
 
-  # extract content as text
-  content <- httr::content(
-    response,
-    as = "text",
-    encoding = "UTF-8"
-  )
-
   # error on http codes 400+
   if (httr::http_error(response)) {
     stop(build_error_message(
-      content, httr::http_type(response), httr::status_code(response)
+      httr::content(response, as = "text"),
+      httr::http_type(response),
+      httr::status_code(response)
     ))
   }
 
-  content
+  response
 }
 
 
