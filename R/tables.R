@@ -4,21 +4,24 @@
 #' attempts, batches long parameters into multiple requests, always fetches all
 #' results, and always returns a tibble.
 #'
-#' Results are requested in CSV form and converted to a tibble via [readr::read_csv()].
+#' Results are requested in CSV form and converted to a tibble via
+#' [readr::read_csv()].
+#'
+#' @references [API Documentation](https://docs.quandl.com/docs/in-depth-usage-1)
 #'
 #' @param code <`character(1)`> datatable code on Quandl
 #' @param ... filters and options to pass as parameters
-#' @param .batch <`integer(1)`> maximum length of any parameter in a single
-#'   request; see Batching below
+#' @param .batch <`integer(1)`> maximum number of elements of any parameter in a
+#'   single request; see Batching below
 #'
 #' @return <`tbl_df`> Results from Quandl in tibble form.
 #'
 #' @section Batching:
 #' The Quandl API can only support a limited number of parameters in one call.
-#' If we want to filter on e.g. 1,000 tickers, that requires multiple requests
+#' If we want to filter on e.g. 1000 tickers, that requires multiple requests
 #' to complete. This wrapper will handle this for you, automatically making
 #' multiple requests to fetch the desired output. Currently, only one `...`
-#' input can be longer than `batch_size`, so you can't filter on e.g. both 1000
+#' input can be longer than `.batch`, so you can't filter on e.g. both 1000
 #' tickers and 1000 dates.
 #'
 #' @export
@@ -72,6 +75,7 @@ quandl_datatable <- function(code, ..., .batch = 50L) {
 #' when it was last updated, which columns can be filtered on, etc. Different
 #' tables may return different fields.
 #'
+#' @references [API Documentation](https://docs.quandl.com/docs/in-depth-usage-1#section-get-table-metadata)
 #'
 #' @param code <`character(1)`> datatable code on Quandl
 #'

@@ -11,8 +11,8 @@ quandl_datatable(code, ..., .batch = 50L)
 
 \item{...}{filters and options to pass as parameters}
 
-\item{.batch}{<\code{integer(1)}> maximum length of any parameter in a single
-request; see Batching below}
+\item{.batch}{<\code{integer(1)}> maximum number of elements of any parameter in a
+single request; see Batching below}
 }
 \value{
 <\code{tbl_df}> Results from Quandl in tibble form.
@@ -23,15 +23,16 @@ attempts, batches long parameters into multiple requests, always fetches all
 results, and always returns a tibble.
 }
 \details{
-Results are requested in CSV form and converted to a tibble via \code{\link[readr:read_csv]{readr::read_csv()}}.
+Results are requested in CSV form and converted to a tibble via
+\code{\link[readr:read_csv]{readr::read_csv()}}.
 }
 \section{Batching}{
 
 The Quandl API can only support a limited number of parameters in one call.
-If we want to filter on e.g. 1,000 tickers, that requires multiple requests
+If we want to filter on e.g. 1000 tickers, that requires multiple requests
 to complete. This wrapper will handle this for you, automatically making
 multiple requests to fetch the desired output. Currently, only one \code{...}
-input can be longer than \code{batch_size}, so you can't filter on e.g. both 1000
+input can be longer than \code{.batch}, so you can't filter on e.g. both 1000
 tickers and 1000 dates.
 }
 
@@ -56,4 +57,7 @@ quandl_datatable(
   date = "2018-01-02",
   qopts.columns = c("date", "ticker", "close")
 )
+}
+\references{
+\href{https://docs.quandl.com/docs/in-depth-usage-1}{API Documentation}
 }

@@ -20,3 +20,6 @@ tables may return different fields.
 \examples{
 quandl_datatable_meta("WIKI/PRICES")
 }
+\references{
+\href{https://docs.quandl.com/docs/in-depth-usage-1#section-get-table-metadata}{API Documentation}
+}
