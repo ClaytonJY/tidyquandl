@@ -24,7 +24,7 @@ in your \href{https://www.quandl.com/account/api}{account settings}.
 \examples{
 quandl_key_set("this-ismykey")
 
-# if you set your key in the "QUANDL_API_KEY environment variable, that will
+# if you set your key in the "QUANDL_API_KEY" environment variable, that will
 # be used automatically
 quandl_key_set()
 }

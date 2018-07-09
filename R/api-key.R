@@ -18,7 +18,7 @@
 #' @examples
 #' quandl_key_set("this-ismykey")
 #'
-#' # if you set your key in the "QUANDL_API_KEY environment variable, that will
+#' # if you set your key in the "QUANDL_API_KEY" environment variable, that will
 #' # be used automatically
 #' quandl_key_set()
 quandl_key_set <- function(api_key = NULL) {
