@@ -53,27 +53,14 @@ quandl_datatable <- function(code, ..., .batch = 50L) {
     stop("`.batch` must be a single integerish value")
   }
 
-  # build API path from code
-  path <- glue::glue("datatables/{code}")
-
-  # split parameters into a list of batches
-  param_batches <- batch_parameters(list(...), .batch)
-
-  # get results from all batches
-  # flatten to single-depth list
-  responses <- rlang::flatten(purrr::map(param_batches, fetch_all_results, path))
-
-  # extract text from each response
-  contents <- purrr::map(responses, httr::content, as = "text", encoding = "UTF-8")
-
-  # append multiple CSV's together
-  if (length(contents) > 1) {
-    contents <- purrr::modify_at(contents, 2:length(contents), ~sub("^.+?\n", "", .x))
-    contents <- paste(contents, collapse = "\n")
-  } else {
-    contents <- contents[[1]]
-  }
+  # process batches
+  csv <- batch_parameters(list(...), .batch) %>%
+    purrr::map(fetch_all_results, path = paste0("datatables/", code)) %>%      # make requests
+    rlang::flatten() %>%
+    purrr::map_chr(httr::content, as = "text", encoding = "UTF-8") %>%         # extract text
+    purrr::map_at(seq(length(.))[-1], stringr::str_replace, "^.+?\n", "") %>%  # strip headers
+    stringr::str_c(collapse = "\n")                                            # collapse to single string
 
   # read all at once
-  readr::read_csv(contents)
+  readr::read_csv(csv)
 }

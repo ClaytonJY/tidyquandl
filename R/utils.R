@@ -105,6 +105,7 @@ batch_parameters <- function(params, batch_size) {
   purrr::map(long_param_batches, ~ c(short_params, rlang::set_names(list(.x), names(long_params))))
 }
 
+
 #' Fetch all results by following cursor_id in response header
 #'
 #' @noRd

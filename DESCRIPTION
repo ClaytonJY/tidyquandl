@@ -14,7 +14,9 @@ Imports:
     purrr,
     rlang,
     readr,
-    tibble
+    stringr,
+    tibble,
+    magrittr
 Suggests: 
     checkmate,
     covr,
