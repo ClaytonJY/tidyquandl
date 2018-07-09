@@ -2,5 +2,6 @@
 
 export("%>%")
 export(quandl_datatable)
+export(quandl_datatable_meta)
 export(quandl_key_set)
 importFrom(magrittr,"%>%")

@@ -64,3 +64,31 @@ quandl_datatable <- function(code, ..., .batch = 50L) {
   # read all at once
   readr::read_csv(csv)
 }
+
+
+#' Fetch metadata for a datatable
+#'
+#' Quandl stores metadata on each datatable that includes names, descriptions,
+#' when it was last updated, which columns can be filtered on, etc. Different
+#' tables may return different fields.
+#'
+#'
+#' @param code <`character(1)`> datatable code on Quandl
+#'
+#' @return <`list`> a list of names values of various types.
+#' @export
+#'
+#' @examples
+#' quandl_datatable_meta("WIKI/PRICES")
+quandl_datatable_meta <- function(code) {
+
+  if (!rlang::is_string(code)) {
+    stop("`code` must be a single string")
+  }
+
+  result <- quandl_api(glue::glue("datatables/{code}/metadata"), "json") %>%
+    httr::content(as = "text") %>%
+    jsonlite::fromJSON()
+
+  result$datatable
+}
