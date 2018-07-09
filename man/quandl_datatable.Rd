@@ -4,29 +4,26 @@
 \alias{quandl_datatable}
 \title{Retrieve data from a Quandl Tables API Endpoint}
 \usage{
-quandl_datatable(code, ..., max_attempts = 2L, delay = 0.5,
-  batch_size = 50L)
+quandl_datatable(code, ..., .batch = 50L)
 }
 \arguments{
-\item{code}{<\code{character(1)}> Datatable code on Quandl, specified as a string;
-see \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable}}
+\item{code}{<\code{character(1)}> datatable code on Quandl}
 
-\item{...}{Additional arguments passed to \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable}}
+\item{...}{filters and options to pass as parameters}
 
-\item{max_attempts}{<\code{integer(1)}> Maximum number of times to attempt query.}
-
-\item{delay}{<\code{integer(1)}> Number of seconds to wait between retries.}
-
-\item{batch_size}{<\code{integer(1)}> maximum length of any parameter in a single
+\item{.batch}{<\code{integer(1)}> maximum length of any parameter in a single
 request; see Batching below}
 }
 \value{
 <\code{tbl_df}> Results from Quandl in tibble form.
 }
 \description{
-This is a wrapper around \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable} which allows for multiple
+This is a replacementfor \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable} which allows for multiple
 attempts, batches long parameters into multiple requests, always fetches all
-results (\code{paginate = TRUE}), and converts the result to a tibble.
+results, and always returns a tibble.
+}
+\details{
+Results are requested in CSV form and converted to a tibble via \code{\link[readr:read_csv]{readr::read_csv()}}.
 }
 \section{Batching}{
 

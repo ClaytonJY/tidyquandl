@@ -77,6 +77,7 @@ build_error_message <- function(content, type = c("text/csv", "application/json"
   msg
 }
 
+
 #' Split a set of parameters into batches
 #'
 #' @noRd
@@ -98,8 +99,29 @@ batch_parameters <- function(params, batch_size) {
 
   # split long parameter
   long_param <- long_params[[1]]
-  long_param_batches <- split(long_param, ceiling(seq_along(long_param) / batch_size))
+  long_param_batches <- rlang::set_names(split(long_param, ceiling(seq_along(long_param) / batch_size)), NULL)
 
   # return list of batches
   purrr::map(long_param_batches, ~ c(short_params, rlang::set_names(list(.x), names(long_params))))
+}
+
+#' Fetch all results by following cursor_id in response header
+#'
+#' @noRd
+#' @keywords internal
+fetch_all_results <- function(params, path) {
+  responses = list()
+
+  while (TRUE) {
+    response <- quandl_api(path, "csv", params)
+    responses <- c(responses, list(response))
+
+    cursor_id <- httr::headers(response)$cursor_id
+
+    if (rlang::is_null(cursor_id)) break
+
+    params$qopts.cursor_id <- cursor_id
+  }
+
+  responses
 }

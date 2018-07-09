@@ -7,19 +7,19 @@ License: MIT + file LICENSE
 URL: https://github.com/ClaytonJY/tidyquandl
 BugReports: https://github.com/ClaytonJY/tidyquandl/issues
 Imports: 
-    checkmate,
     dplyr,
     glue,
     httr,
     jsonlite,
     purrr,
-    Quandl,
     rlang,
     readr,
     tibble
 Suggests: 
+    checkmate,
     covr,
-    testthat
+    testthat,
+    Quandl
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

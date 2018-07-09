@@ -1,15 +1,14 @@
 #' Retrieve data from a Quandl Tables API Endpoint
 #'
-#' This is a wrapper around [Quandl::Quandl.datatable] which allows for multiple
+#' This is a replacementfor [Quandl::Quandl.datatable] which allows for multiple
 #' attempts, batches long parameters into multiple requests, always fetches all
-#' results (`paginate = TRUE`), and converts the result to a tibble.
+#' results, and always returns a tibble.
 #'
-#' @param code <`character(1)`> Datatable code on Quandl, specified as a string;
-#'   see [Quandl::Quandl.datatable]
-#' @param ... Additional arguments passed to [Quandl::Quandl.datatable]
-#' @param max_attempts <`integer(1)`> Maximum number of times to attempt query.
-#' @param delay <`integer(1)`> Number of seconds to wait between retries.
-#' @param batch_size <`integer(1)`> maximum length of any parameter in a single
+#' Results are requested in CSV form and converted to a tibble via [readr::read_csv()].
+#'
+#' @param code <`character(1)`> datatable code on Quandl
+#' @param ... filters and options to pass as parameters
+#' @param .batch <`integer(1)`> maximum length of any parameter in a single
 #'   request; see Batching below
 #'
 #' @return <`tbl_df`> Results from Quandl in tibble form.
@@ -45,38 +44,36 @@
 #'   date = "2018-01-02",
 #'   qopts.columns = c("date", "ticker", "close")
 #' )
-quandl_datatable <- function(code, ..., max_attempts = 2L, delay = 0.5, batch_size = 50L) {
-  checkmate::assert_string(code)
-  checkmate::assert_count(max_attempts, positive = TRUE)
-  checkmate::assert_number(delay, lower = 0)
-  checkmate::assert_count(batch_size, positive = TRUE, null.ok = TRUE)
+quandl_datatable <- function(code, ..., .batch = 50L) {
 
-  # API key is NULL if unset
-  checkmate::assert_string(Quandl::Quandl.api_key())
+  if (!rlang::is_string(code)) {
+    stop("`code` must be a single string")
+  }
+  if (!rlang::is_scalar_integerish(.batch) | rlang::is_null(.batch)) {
+    stop("`.batch` must be a single integerish value")
+  }
 
-  param_batches <- batch_parameters(list(...), batch_size)
+  # build API path from code
+  path <- glue::glue("datatables/{code}")
 
-  quandl_func <- purrr::safely(purrr::lift_dl(purrr::partial(Quandl::Quandl.datatable, code = code, paginate = TRUE)))
+  # split parameters into a list of batches
+  param_batches <- batch_parameters(list(...), .batch)
 
-  df <- purrr::map_df(param_batches, function(params) {
-    response <- list(result = NULL)
-    attempts <- 0L
+  # get results from all batches
+  # flatten to single-depth list
+  responses <- rlang::flatten(purrr::map(param_batches, fetch_all_results, path))
 
-    while (is.null(response$result) && (attempts < max_attempts)) {
-      if (attempts > 0L) Sys.sleep(delay)
+  # extract text from each response
+  contents <- purrr::map(responses, httr::content, as = "text", encoding = "UTF-8")
 
-      response <- quandl_func(params)
+  # append multiple CSV's together
+  if (length(contents) > 1) {
+    contents <- purrr::modify_at(contents, 2:length(contents), ~sub("^.+?\n", "", .x))
+    contents <- paste(contents, collapse = "\n")
+  } else {
+    contents <- contents[[1]]
+  }
 
-      attempts <- attempts + 1L
-    }
-
-    # error if no results
-    if (is.null(response$result)) {
-      stop("No result from Quandl after ", attempts, " attempts. Last error:\n\t\t\t\t", response$error)
-    }
-
-    response$result
-  })
-
-  tibble::as_tibble(df)
+  # read all at once
+  readr::read_csv(contents)
 }

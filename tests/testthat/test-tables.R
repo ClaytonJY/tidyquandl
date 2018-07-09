@@ -1,7 +1,8 @@
 context("Test Tables API")
 
 describe("quandl_datatable", {
-  it("works as expected", {
+  it("works as expected on simple cases", {
+
     expect_tibble(
       quandl_datatable("WIKI/PRICES", ticker = "AAPL", date = "2018-01-02"),
       all.missing = FALSE,
@@ -34,6 +35,15 @@ describe("quandl_datatable", {
     expect_identical(normal, paged)
   })
 
+  it("can be batched without changing result", {
+    tickers <- c("AA", "AAPL", "ABBV", "ABC", "AGN")
+
+    expect_identical(
+      quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02"),
+      quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02", .batch = 2L)
+    )
+  })
+
   it("shows error from Quandl", {
 
     # bad code
@@ -49,29 +59,9 @@ describe("quandl_datatable", {
     )
   })
 
-  it("allows for control over retry loop", {
+  it("validates input", {
 
-    # max_attempts; number should be printed in error message
-    expect_error(
-      quandl_datatable("WIKI/FOOBAR", max_attempts = 1),
-      "1 attempts"
-    )
-    expect_error(
-      quandl_datatable("WIKI/FOOBAR", max_attempts = 5),
-      "5 attempts"
-    )
-
-    # delay; two failed calls are quite fast aside from delay
-    time <- system.time(purrr::safely(quandl_datatable)("WIKI/FOOBAR", max_attempts = 2, delay = 2))
-    expect_true(time["elapsed"] > 2)
-  })
-
-  it("can be batched without changing result", {
-    tickers <- c("AA", "AAPL", "ABBV", "ABC", "AGN")
-
-    expect_identical(
-      quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02"),
-      quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02", batch_size = 2L)
-    )
+    expect_error(quandl_datatable(code = 10))
+    expect_error(quandl_datatable(code = "WIKI/PRICES", .batch = 1.2))
   })
 })
