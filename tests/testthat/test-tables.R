@@ -66,6 +66,23 @@ describe("quandl_datatable()", {
       "cannot use split_ratio column as a filter"
     )
   })
+
+  it("is roughly equivalent to Quandl::Quandl.datatable", {
+
+    params <- list("WIKI/PRICES", ticker = "AAPL", date.gte = "2018-01-01", date.lte = "2018-02-01")
+
+    # types can differ, so only dims are checked
+    expect_identical(
+      dim(do.call(quandl_datatable,         params)),
+      dim(do.call(Quandl::Quandl.datatable, params))
+    )
+
+    # both can fetch multiple pages
+    expect_identical(
+      dim(do.call(quandl_datatable,         c(params, list(qopts.per_page = 10)))),
+      dim(do.call(Quandl::Quandl.datatable, c(params, list(qopts.per_page = 10, paginate = TRUE))))
+    )
+  })
 })
 
 
