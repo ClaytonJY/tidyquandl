@@ -31,7 +31,7 @@ describe("quandl_api()", {
     )
   })
 
-  it("handles multiple-entry parameters", {
+  it("handles vector inputs", {
 
     params <- list(
       ticker        = c("AAPL", "GOOGL"),

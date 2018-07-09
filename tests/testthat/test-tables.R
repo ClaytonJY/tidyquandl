@@ -1,6 +1,6 @@
 context("Test Tables API")
 
-describe("quandl_datatable", {
+describe("quandl_datatable()", {
   it("works as expected on simple cases", {
 
     expect_tibble(
@@ -17,26 +17,22 @@ describe("quandl_datatable", {
     )
   })
 
-  it("automatically fetches all results", {
+  it("validates input", {
 
-    # function template
-    f <- purrr::partial(
-      quandl_datatable,
-      "WIKI/PRICES",
-      ticker = "AAPL",
-      date.gte = "2018-01-01",
-      date.lte = "2018-03-01"
-    )
-
-    normal <- f()
-    paged  <- f(qopts.per_page = 20)  # 3 pages
-
-    expect_tibble(paged)
-    expect_identical(normal, paged)
+    expect_error(quandl_datatable(code = 10))
+    expect_error(quandl_datatable(code = "WIKI/PRICES", .batch = 1.2))
   })
 
-  it("can be batched without changing result", {
-    tickers <- c("AA", "AAPL", "ABBV", "ABC", "AGN")
+  it("automatically fetches all results", {
+
+    expect_identical(
+      quandl_datatable("WIKI/PRICES", ticker = "AAPL", date.gte = "2018-01-01", date.lt = "2018-02-01"),
+      quandl_datatable("WIKI/PRICES", ticker = "AAPL", date.gte = "2018-01-01", date.lt = "2018-02-01", qopts.per_page = 10L)
+    )
+  })
+
+  it("can be batched without affecting results", {
+    tickers <- c("AAPL", "GOOGL", "MSFT")
 
     expect_identical(
       quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02"),
@@ -44,7 +40,17 @@ describe("quandl_datatable", {
     )
   })
 
-  it("shows error from Quandl", {
+  it("can batch and page simultaneously", {
+    tickers <- c("AAPL", "GOOGL", "MSFT")
+
+    # > 100 results
+    expect_identical(
+      quandl_datatable("WIKI/PRICES", ticker = tickers, date.gte = "2018-01-01", date.lt = "2018-02-01"),
+      quandl_datatable("WIKI/PRICES", ticker = tickers, date.gte = "2018-01-01", date.lt = "2018-02-01", qopts.per_page = 20, .batch = 2L)
+    )
+  })
+
+  it("shows errors from Quandl", {
 
     # bad code
     expect_error(
@@ -57,11 +63,5 @@ describe("quandl_datatable", {
       quandl_datatable("WIKI/PRICES", split_ratio = "1"),
       "cannot use split_ratio column as a filter"
     )
-  })
-
-  it("validates input", {
-
-    expect_error(quandl_datatable(code = 10))
-    expect_error(quandl_datatable(code = "WIKI/PRICES", .batch = 1.2))
   })
 })
