@@ -1,16 +1,39 @@
-context("Test authentication")
+context("Test setting and getting API keys")
 
-test_that("API key can be set and read", {
+describe("quandl_key_get()", {
 
-  # no key set
-  expect_null(quandl_api_key())
+  it("errors when no key is set", {
+    expect_error(tidyquandl:::quandl_key_get())
+  })
+})
 
-  # set key from environment variable
-  api_key <- Sys.getenv("QUANDL_API_KEY")
+describe("quandl_key_set()", {
 
-  # setting should return key
-  expect_equal(quandl_api_key(api_key), api_key)
+  it("returns set value, invisbly", {
+    expect_identical(quandl_key_set("foobar"), "foobar")
+  })
 
-  # key should still be set
-  expect_equal(quandl_api_key(), api_key)
+  it("validates input", {
+    expect_error(quandl_key_set(1))
+  })
+
+  it("sets what is passed in", {
+    expect_identical(tidyquandl:::quandl_key_get(), "foobar")
+  })
+
+  it("can set key from environment variable", {
+    quandl_key_set()
+    expect_identical(tidyquandl:::quandl_key_get(), Sys.getenv("QUANDL_API_KEY"))
+  })
+
+  it("errors if env var is empty", {
+    old <- Sys.getenv("QUANDL_API_KEY")
+    Sys.setenv(QUANDL_API_KEY = "")
+    on.exit(Sys.setenv(QUANDL_API_KEY = old))
+    expect_error(quandl_key_set())
+  })
+
+  it("is compatible with Quandl package", {
+    expect_identical(tidyquandl:::quandl_key_get(), Quandl::Quandl.api_key())
+  })
 })
