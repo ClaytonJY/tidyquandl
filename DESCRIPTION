@@ -1,6 +1,6 @@
 Package: tidyquandl
 Title: A tidy interface to financial data via Quandl.com
-Version: 0.1.1.9000
+Version: 0.1.1.9001
 Authors@R: person("Clayton", "Yochum", email = "claytonjy@gmail.com", role = c("aut", "cre"))
 Description: A tidy alternative to the `Quandl` package. Automatically batches and retries requests and ensures tibble outputs.
 License: MIT + file LICENSE
