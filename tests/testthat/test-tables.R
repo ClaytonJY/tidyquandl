@@ -67,3 +67,18 @@ describe("quandl_datatable()", {
     )
   })
 })
+
+
+describe("quandl_datatable_meta()", {
+
+  it("validates input", {
+    expect_error(quandl_datatable_meta(123))
+  })
+
+  it("returns a list", {
+    expect_list(
+      quandl_datatable_meta("WIKI/PRICES"),
+      all.missing = FALSE, names = "named"
+    )
+  })
+})
