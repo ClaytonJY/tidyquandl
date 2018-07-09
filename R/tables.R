@@ -24,7 +24,7 @@
 #' @export
 #'
 #' @examples
-#' quandl_api_key(Sys.getenv("QUANDL_API_KEY"))
+#' quandl_key_set()
 #'
 #' # get one day of prices on Apple from Wiki Prices
 #' quandl_datatable("WIKI/PRICES", ticker = "AAPL", date = "2018-01-02")

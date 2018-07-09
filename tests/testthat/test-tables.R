@@ -1,5 +1,7 @@
 context("Test Tables API")
 
+quandl_key_set()
+
 describe("quandl_datatable()", {
   it("works as expected on simple cases", {
 

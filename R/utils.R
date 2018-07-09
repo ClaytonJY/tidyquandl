@@ -12,8 +12,8 @@ quandl_api <- function(
   path,
   type    = c("csv", "json", "xml"),
   query   = NULL,
-  api_key = quandl_api_key(),
-  ...
+  ...,
+  api_key = quandl_key_get()
 ) {
 
   type   <- rlang::arg_match(type)

@@ -1,5 +1,7 @@
 context("Test utility functions")
 
+quandl_key_set()
+
 describe("quandl_api()", {
 
   path <- "datatables/WIKI/PRICES"
