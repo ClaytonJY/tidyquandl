@@ -29,8 +29,9 @@ Core features:
 - automatically retries failed queries
 - automatically splits large queries into manageable ones (batching)
 - uses `readr::read_csv()` for speed and type inference
+- well-formatted errors
 
-This is not the only way to interact with Quandl from R; Quandl themselves maintain a [`Quandl` R package](https://github.com/quandl/quandl-r) which covers a wider set of uses than `tidyquandl` (like the Timeseries API). An earlier version of this package wrapped the Quandl one, but as of v0.1.2 the underlying code has been rewritten from scratch.
+This is not the only way to interact with Quandl from R; Quandl themselves maintain a [`Quandl` R package](https://github.com/quandl/quandl-r) which covers a wider set of uses than `tidyquandl` (like the Timeseries API), but supports none of the above features. An earlier version of this package wrapped the Quandl one, but as of v0.1.2 the underlying code has been rewritten from scratch.
 
 
 ## Installation
