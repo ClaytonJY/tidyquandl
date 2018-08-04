@@ -1,0 +1,198 @@
+---
+title: "Comparing `tidyquandl` to `Quandl`"
+author: "Clayton Yochum"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette will demonstrate some differences between the `tidquandl` package and the earlier Quandl-developed `Quandl` package that `tidyquandl` aims to supercede.
+
+## API Key
+
+In `Quandl`, API keys are both set and retrieved through the `Quandl.api_key()` function. It won't look anywhere for your key, so you always have to pass it in.
+
+```{r}
+library(Quandl)
+
+Quandl.api_key(Sys.getenv("QUANDL_API_KEY"))
+```
+
+(notice that `Quandl` directly attaches packages to the current workspace, which is generally considered poor practice.)
+
+`tidyquandl` replaces this with `quandl_key_set()` and `quandl_key_get()` (the latter is currently an internal-only function), and `quandl_key_get()` will look for a `QUANDL_API_KEY` environment variable if no key is passed in as an argument.
+
+```{r}
+library(tidyquandl)
+
+quandl_key_set()
+```
+
+Both functions store the key in the same `options` entry (`Quandl.api_key`) for the duration of the R session, so if you need to use both packages, you only need to set your key _once_ and can do so with either package.
+
+
+## Tables
+
+We've replaced the `Quandl.datatable()` function with `quandl_datatable`. For many queries, the arguments will be identical and the only difference in output will be that `tidyquandl` returns a tibble (`tbl_df`) while `Quandl` returns a plain `data.frame`:
+
+```{r}
+Quandl.datatable("WIKI/PRICES", ticker = "AAPL", date.gte = "2018-01-01", date.lt = "2018-01-08", qopts.columns = c("ticker", "date", "close", "volume"))
+
+quandl_datatable("WIKI/PRICES", ticker = "AAPL", date.gte = "2018-01-01", date.lt = "2018-01-08", qopts.columns = c("ticker", "date", "close", "volume"))
+```
+
+Calling `tibble::as_tibble()` on the `Quandl` output would make it identical to the `tidyquandl` output in this case.
+
+
+### Batching
+
+One of the motivating reasons for making `tidyquandl` was to handle the case where we want to get information on hundreds of tickers at once.
+
+```{r}
+# 500!
+tickers <- c(
+  "AAPL", "ABC", "AA", "ABBV", "ACE", "AGN", "ADP", "ADSK", "ABT", 
+  "AEE", "ACN", "AEP", "ADBE", "AET", "ADI", "ADM", "ADS", "AIV", 
+  "ADT", "ALL", "AES", "ALTR", "ALXN", "AFL", "AMAT", "AIG", "AMGN", 
+  "AIZ", "AMT", "AKAM", "ALLE", "AME", "AMP", "AMZN", "A", "AN", 
+  "AON", "APD", "APH", "AVB", "AVP", "APA", "APC", "AXP", "AZO", 
+  "BA", "ARG", "BAC", "ATI", "AVY", "BCR", "BEAM", "BEN", "BAX", 
+  "BBBY", "BBT", "BIIB", "BBY", "BLL", "BDX", "BMS", "BRCM", "BF_B", 
+  "BHI", "BSX", "BK", "BWA", "BLK", "BXP", "CA", "BMY", "BRK_B", 
+  "CAT", "BTU", "CBS", "C", "CCE", "CCI", "CAG", "CAH", "CAM", 
+  "CERN", "CB", "CFN", "CBG", "CHK", "CI", "CCL", "CINF", "CELG", 
+  "CL", "CF", "CMCSA", "CME", "CHRW", "CMG", "CMS", "CLF", "CLX", 
+  "COF", "CMA", "COL", "CMI", "COST", "CNP", "CNX", "COG", "COH", 
+  "CSX", "COP", "CTL", "COV", "CPB", "CTXS", "CRM", "CSC", "CVS", 
+  "CSCO", "D", "CTAS", "DD", "CTSH", "CVC", "DGX", "CVX", "DHR", 
+  "DAL", "DIS", "DLPH", "DE", "DFS", "DNB", "DG", "DO", "DHI", 
+  "DOW", "DISCA", "DTE", "DLTR", "DTV", "DNR", "DVA", "DVN", "DOV", 
+  "EBAY", "DPS", "ECL", "DRI", "ED", "DUK", "EMC", "EMN", "EA", 
+  "EMR", "EOG", "EQR", "EFX", "ESRX", "EIX", "EL", "ETFC", "ETN", 
+  "ETR", "EXC", "EQT", "EXPE", "ESV", "FAST", "FB", "FCX", "EW", 
+  "EXPD", "FE", "F", "FISV", "FDO", "FDX", "FLS", "FMC", "FFIV", 
+  "FOXA", "FIS", "FRX", "FITB", "FTI", "FLIR", "FLR", "GCI", "FOSL", 
+  "GGP", "FSLR", "FTR", "GAS", "GM", "GD", "GE", "GNW", "GOOG", 
+  "GHC", "GILD", "GIS", "GRMN", "GLW", "GS", "GWW", "GME", "HAL", 
+  "GPC", "GPS", "HCBK", "HCN", "GT", "HAR", "HOG", "HAS", "HON", 
+  "HBAN", "HPQ", "HCP", "HD", "HRL", "HES", "HIG", "HSP", "HST", 
+  "HOT", "HP", "HUM", "HRB", "ICE", "HRS", "INTU", "HSY", "IPG", 
+  "IR", "IBM", "IFF", "ISRG", "IGT", "ITW", "INTC", "JBL", "JCI", 
+  "IP", "IRM", "JNPR", "IVZ", "JWN", "JEC", "KLAC", "JNJ", "KMI", 
+  "JOY", "KO", "K", "KR", "KEY", "KIM", "KSU", "KMB", "KMX", "LEN", 
+  "KORS", "LH", "KRFT", "KSS", "LLL", "L", "LB", "LM", "LEG", "LMT", 
+  "LO", "LIFE", "LLTC", "LLY", "LUK", "LNC", "M", "MA", "LOW", 
+  "MAC", "LRCX", "LSI", "MAS", "LUV", "MCD", "LYB", "MCK", "MCO", 
+  "MAR", "MDT", "MAT", "MCHP", "MJN", "MMC", "MDLZ", "MMM", "MNST", 
+  "MET", "MON", "MHFI", "MHK", "MPC", "MKC", "MRO", "MSI", "MO", 
+  "MU", "MOS", "MWV", "MRK", "NBL", "MS", "MSFT", "NDAQ", "MTB", 
+  "NEE", "MUR", "NFLX", "MYL", "NI", "NBR", "NLSN", "NE", "NOV", 
+  "NEM", "NSC", "NFX", "NTRS", "NKE", "NUE", "NOC", "NWL", "NRG", 
+  "OI", "NTAP", "OMC", "NU", "ORLY", "NVDA", "PAYX", "PBCT", "NWSA", 
+  "PCAR", "OKE", "ORCL", "PCL", "OXY", "PCP", "PEG", "PBI", "PETM", 
+  "PCG", "PFG", "PCLN", "PDCO", "PHM", "PEP", "PLD", "PFE", "PM", 
+  "PG", "PNC", "PNR", "PH", "POM", "PKI", "PPL", "PLL", "PSA", 
+  "PNW", "PVH", "PPG", "PX", "PRGO", "PRU", "R", "PSX", "RDC", 
+  "PWR", "RF", "PXD", "RHI", "QCOM", "QEP", "RIG", "RL", "RAI", 
+  "ROP", "REGN", "RRC", "RTN", "RHT", "ROK", "SEE", "ROST", "SHW", 
+  "RSG", "SBUX", "SCG", "SCHW", "SNA", "SE", "SNI", "SO", "SIAL", 
+  "SJM", "SRCL", "SLB", "SLM", "SNDK", "STJ", "STT", "STX", "SPG", 
+  "SPLS", "SRE", "STI", "SYK", "SYMC", "STZ", "TAP", "SWK", "TDC", 
+  "SWN", "TE", "SWY", "TEG", "SYY", "T", "TIF", "TJX", "TMK", "TEL", 
+  "TRV", "TGT", "TSN", "THC", "TMO", "TRIP", "TROW", "TYC", "TSO", 
+  "TSS", "UNP", "TWC", "TWX", "TXN", "TXT", "UTX", "UNH", "VAR", 
+  "VFC", "UPS", "URBN", "VMC", "USB", "V", "VZ", "VIAB", "WAG", 
+  "WAT", "VLO", "WDC", "WEC", "VNO", "WFC", "VRSN", "WFM", "VRTX", 
+  "WHR", "VTR", "WIN", "WLP", "WM", "WMB", "WY", "WYN", "WYNN", 
+  "WMT", "WPX", "XLNX", "XOM", "WU", "XRAY", "XRX", "X", "XEL", 
+  "YUM", "XL", "XYL", "YHOO", "ZION", "ZMH", "ZTS", "TSCO", "FLWS", 
+  "SRCE", "FUBC"
+)
+```
+
+These are all valid tickers in the "WIKI/PRICES" table, though they might not all overlap in time.
+
+`Quandl` can't handle this very well:
+
+```{r, error=TRUE}
+result <- Quandl.datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02", qopts.columns = c("ticker", "date", "close", "volume"))
+```
+
+We get an error due to the request being too large, and a poorly-formatted error at that. We _could_ write some code to help split `tickers` into smaller batches (how small?), or we could let `tidyquandl` worry about that for us:
+
+```{r}
+result <- quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02", qopts.columns = c("ticker", "date", "close", "volume"))
+
+nrow(result)
+
+head(result)
+```
+
+The batching is a bit naive and overly-cautious, but I have yet to see it fail due to too many parameters.
+
+
+### Paginated Results
+
+Some queries return many results, more than Quandl wants to return for one request. What if we want full price history for Apple and Google prior to 2018?
+
+```{r}
+result <- Quandl.datatable("WIKI/PRICES", ticker = c("AAPL", "GOOGL"), date.lt = "2018-01-01", qopts.columns = c("ticker", "date", "close", "volume"))
+```
+
+The `Quandl` package is happy to fetch many pages of results, but you have to force it to do this with `paginate = TRUE`:
+
+```{r}
+result <- Quandl.datatable("WIKI/PRICES", ticker = c("AAPL", "GOOGL"), date.lt = "2018-01-01", qopts.columns = c("ticker", "date", "close", "volume"), paginate = TRUE)
+
+nrow(result)
+```
+
+With `tidyquandl`, you never need to worry about this; all pages of results are fetched and combined for all queries.
+
+```{r}
+result <- quandl_datatable("WIKI/PRICES", ticker = c("AAPL", "GOOGL"), date.lt = "2018-01-01", qopts.columns = c("ticker", "date", "close", "volume"))
+
+nrow(result)
+```
+
+
+## Metadata
+
+Quandl has recently added the ability to grab metadata about any table through the API. You can't currently get this with `Quandl` (`Quandl::metaData()` does something else), but you can with `tidyquandl`!
+
+```{r}
+quandl_datatable_meta("WIKI/PRICES")
+```
+
+Notice this returns a list (where one element is a plain `data.frame`), rather than forcing it all into a `data.frame`/`tibble`. This format is subject to change; could be nice to enter a vector of table names and receive a tibble with one row per table and `columns` as a nested tibble (see [#34](https://github.com/ClaytonJY/tidyquandl/issues/34)).
+
+
+## Errors
+
+```{r, error=TRUE}
+Quandl.datatable("FOO/BAR", ticker = "AAPL")
+
+quandl_datatable("FOO/BAR", ticker = "AAPL")
+```
+
+
+## Missing Functionality
+
+While we think `tidyquandl` is now the _best_ way to query Quandl's Tables API from R, the `Quandl` package has a lot more uses we don't address, like:
+
+- timeseries datasets (`Quandl()`, `Quandl.dataset.get()`)
+- bulk downloads (`Quandl.database.bulk_download_to_file()`, `Quandl.database.bulk_download_url()`)
+- search (`Quandl.search()`)
+
+We're open to addressing any of these in `tidyquandl` if there's demand for it; let us know in the [issues]()!
+
