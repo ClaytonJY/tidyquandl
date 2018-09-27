@@ -18,7 +18,7 @@ single request; see Batching below}
 <\code{tbl_df}> Results from Quandl in tibble form.
 }
 \description{
-This is a replacementfor \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable} which allows for multiple
+This is a replacement for \link[Quandl:Quandl.datatable]{Quandl::Quandl.datatable} which allows for multiple
 attempts, batches long parameters into multiple requests, always fetches all
 results, and always returns a tibble.
 }

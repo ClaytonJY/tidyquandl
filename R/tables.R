@@ -1,6 +1,6 @@
 #' Retrieve data from a Quandl Tables API Endpoint
 #'
-#' This is a replacementfor [Quandl::Quandl.datatable] which allows for multiple
+#' This is a replacement for [Quandl::Quandl.datatable] which allows for multiple
 #' attempts, batches long parameters into multiple requests, always fetches all
 #' results, and always returns a tibble.
 #'
@@ -56,6 +56,9 @@ quandl_datatable <- function(code, ..., .batch = 50L) {
     stop("`.batch` must be a single integerish value")
   }
 
+  # get column types from metadata
+  type_df <- quandl_datatable_meta(code)$columns
+
   # process batches
   csv <- batch_parameters(list(...), .batch) %>%
     purrr::map(fetch_all_results, path = paste0("datatables/", code)) %>%      # make requests
@@ -65,7 +68,7 @@ quandl_datatable <- function(code, ..., .batch = 50L) {
     stringr::str_c(collapse = "\n")                                            # collapse to single string
 
   # read all at once
-  readr::read_csv(csv)
+  readr::read_csv(csv, col_types = convert_col_spec(type_df))
 }
 
 

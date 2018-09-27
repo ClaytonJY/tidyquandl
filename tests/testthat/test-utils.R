@@ -116,3 +116,20 @@ describe("batch_params()", {
     expect_error(tidyquandl:::batch_parameters(params, 10L), "not yet supported")
   })
 })
+
+describe("convert_col_spec()", {
+
+  it("converts types as expected", {
+    type_df <- data.frame(
+      name = letters[1:8],
+      type = c("float", "BigDecimal(34, 12)", "double", "integer", "Datetime", "Date", "String", "foobar")
+    )
+
+    result <- tidyquandl:::convert_col_spec(type_df)
+
+    expect_identical(
+      result,
+      readr::cols(a = "d", b = "d", c = "d", d = "i", e = "T", f = "D", g = "c", h = "c")
+    )
+  })
+})

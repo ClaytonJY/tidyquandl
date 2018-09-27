@@ -126,3 +126,25 @@ fetch_all_results <- function(params, path) {
 
   responses
 }
+
+
+#' Translate Quandl-provided types to readr-compatible column spec
+#' type_tbl should be from e.g. quandl_datatable_meta("WIKI/PRICES")$columns
+#'
+#' @noRd
+#' @keywords internal
+convert_col_spec <- function(type_tbl) {
+
+  types <- stringr::str_to_lower(type_tbl$type)
+
+  funcs <- dplyr::case_when(
+    stringr::str_detect(types, "^float|^bigdecimal|^double") ~ list(readr::col_double()),
+    stringr::str_detect(types, "^integer")                   ~ list(readr::col_integer()),
+    stringr::str_detect(types, "^datetime")                  ~ list(readr::col_datetime()),
+    stringr::str_detect(types, "^date")                      ~ list(readr::col_date()),
+    TRUE                                                     ~ list(readr::col_character())
+  ) %>%
+    rlang::set_names(type_tbl$name)
+
+  purrr::lift_dl(readr::cols)(funcs)
+}
