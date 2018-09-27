@@ -1,6 +1,6 @@
 Package: tidyquandl
 Title: A tidy interface to financial data via Quandl.com
-Version: 0.1.2.0
+Version: 0.1.2.9000
 Authors@R: person("Clayton", "Yochum", email = "claytonjy@gmail.com", role = c("aut", "cre"))
 Description: A tidy alternative to the `Quandl` package. Automatically batches and retries requests and ensures tibble outputs.
 License: MIT + file LICENSE
@@ -28,5 +28,5 @@ ByteCompile: true
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 VignetteBuilder: knitr

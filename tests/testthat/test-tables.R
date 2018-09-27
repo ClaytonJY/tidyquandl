@@ -36,7 +36,7 @@ describe("quandl_datatable()", {
   it("can be batched without affecting results", {
     tickers <- c("AAPL", "GOOGL", "MSFT")
 
-    expect_identical(
+    expect_equal(
       quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02"),
       quandl_datatable("WIKI/PRICES", ticker = tickers, date = "2018-01-02", .batch = 2L)
     )
@@ -46,7 +46,7 @@ describe("quandl_datatable()", {
     tickers <- c("AAPL", "GOOGL", "MSFT")
 
     # > 100 results
-    expect_identical(
+    expect_equal(
       quandl_datatable("WIKI/PRICES", ticker = tickers, date.gte = "2018-01-01", date.lt = "2018-02-01"),
       quandl_datatable("WIKI/PRICES", ticker = tickers, date.gte = "2018-01-01", date.lt = "2018-02-01", qopts.per_page = 20, .batch = 2L)
     )
