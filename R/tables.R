@@ -24,6 +24,8 @@
 #' input can be longer than `.batch`, so you can't filter on e.g. both 1000
 #' tickers and 1000 dates.
 #'
+#' @importFrom rlang .data
+#'
 #' @export
 #'
 #' @examples
@@ -56,11 +58,16 @@ quandl_datatable <- function(code, ..., .batch = 50L) {
     stop("`.batch` must be a single integerish value")
   }
 
+  quandl_params <- list(...)
+
   # get column types from metadata
   type_df <- quandl_datatable_meta(code)$columns
+  if ("qopts.columns" %in% names(quandl_params)) {
+    type_df <- dplyr::filter(type_df, .data$name %in% quandl_params$qopts.columns)
+  }
 
   # process batches
-  csv <- batch_parameters(list(...), .batch) %>%
+  csv <- batch_parameters(quandl_params, .batch) %>%
     purrr::map(fetch_all_results, path = paste0("datatables/", code)) %>%      # make requests
     rlang::flatten() %>%
     purrr::map_chr(httr::content, as = "text", encoding = "UTF-8") %>%         # extract text
